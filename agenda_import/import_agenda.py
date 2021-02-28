@@ -9,13 +9,13 @@ class create_db:
         wb = xlrd.open_workbook(loc)
         self.sheet = wb.sheet_by_index(0)
         self.sheet_rows = wb.sheet_by_index(0).nrows
-        self.headers = self.sheet.row_values(0) + ["ID", "ParentID"]
+        self.header_start_index = 14
+        self.headers = self.sheet.row_values(self.header_start_index) + ["ID", "ParentID"]
         self.mytable = ""
 
     def add_all_rows(self):
         uniqueID = 0
-        parentID = 0
-        i = 1
+        i = self.header_start_index+1
         while i < self.sheet_rows:
             parent = False
             row = self.sheet.row_values(i)
@@ -28,8 +28,8 @@ class create_db:
                 uniqueID += 1
                 i += 1
             else:
-                # row.append(str(parentID))
                 self.add_row_helper(row)
+                parentID = row[-1]
                 uniqueID += 1
                 x = i+1
                 while x < self.sheet_rows and self.sheet.row_values(x)[3] == 'Sub':
@@ -40,12 +40,11 @@ class create_db:
                     uniqueID += 1
                     x += 1
                 i = x
-                parentID += 1
 
     def add_header(self):
         schema = dict()
         for x in self.headers:
-            mystr = "\"" + x.lstrip("*") + "\""
+            mystr = "\"" + x.lstrip("*").replace("\n","") + "\""
             schema[mystr] = "text"
         self.headers = schema.keys()
         self.mytable = db_table("users", schema)
@@ -55,8 +54,6 @@ class create_db:
         res = {x: y for x,y in zip(self.headers, data)}
         self.mytable.insert(res)
 
-
-# row[x] = y.replace("'", "")
 database = create_db(sys.argv[-1])
 database.add_header()
 database.add_all_rows()
