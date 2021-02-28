@@ -46,9 +46,6 @@ class db_table:
     # If table already exists, nothing is done even if the schema has changed
     # If you need to apply schema changes, please delete the database file
     #
-
-    def get_conn(self):
-        return self.db_conn
         
     def create_table(self):
         # { "id": "integer", "name": "text" } -> "id integer, name text"
