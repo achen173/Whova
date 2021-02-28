@@ -15,6 +15,6 @@ Make sure to have the following python libraries installed
 ![](https://github.com/achen173/Whova/blob/master/agenda_import/Pictures/example_help.JPG)
 
 Example:
-> python3 lookup_agenda.py 'Time Start' '08:45 AM'
+> python3 lookup_agenda.py time_start '08:45 AM'
 > 
 ![](https://github.com/achen173/Whova/blob/master/agenda_import/Pictures/example_lookup.JPG)
