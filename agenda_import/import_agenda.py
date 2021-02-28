@@ -28,7 +28,7 @@ class create_db:
                 uniqueID += 1
                 i += 1
             else:
-                row.append(str(parentID))
+                # row.append(str(parentID))
                 self.add_row_helper(row)
                 uniqueID += 1
                 x = i+1
