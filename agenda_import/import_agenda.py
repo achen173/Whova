@@ -13,7 +13,6 @@ class create_db:
         self.mytable = ""
 
     def add_all_rows(self):
-        result = []
         uniqueID = 0
         parentID = 0
         i = 1
@@ -25,33 +24,39 @@ class create_db:
                 parent = True
             if not parent:
                 row.append('')
-                result.append(row)
+                self.add_row_helper(row)
                 uniqueID += 1
                 i += 1
             else:
                 row.append(str(parentID))
-                result.append(row)
+                self.add_row_helper(row)
                 uniqueID += 1
                 x = i+1
                 while x < self.sheet_rows and self.sheet.row_values(x)[3] == 'Sub':
                     row = self.sheet.row_values(x)
                     row.append(str(uniqueID))
                     row.append(str(parentID))
-                    result.append(row)
+                    self.add_row_helper(row)
                     uniqueID += 1
                     x += 1
                 i = x
                 parentID += 1
 
     def add_header(self):
-        temp = dict()
+        schema = dict()
         for x in self.headers:
-            if x[0] == '*':
-                temp["\"" + x[1:] + "\""] = "text"
-            else:
-                temp["\"" + x + "\""] = "text"
-        self.mytable = db_table("users", temp)
+            mystr = "\"" + x.lstrip("*") + "\""
+            schema[mystr] = "text"
+        self.headers = schema.keys()
+        self.mytable = db_table("users", schema)
 
+    def add_row_helper(self, data):
+        data = [x.replace("'", "") for x in data]   # be careful cuz some letters are illegal in name
+        res = {x: y for x,y in zip(self.headers, data)}
+        self.mytable.insert(res)
+
+
+# row[x] = y.replace("'", "")
 database = create_db(sys.argv[-1])
 database.add_header()
 database.add_all_rows()
